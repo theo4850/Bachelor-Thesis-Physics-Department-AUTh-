@@ -17,13 +17,13 @@ def grayscale_to_rgb_float32(images:np.ndarray) -> np.ndarray:
     images = np.repeat(images, 3, axis=-1)
   return images.astype(np.float32)
 
-def preprocessing(images: np.ndarray, preprocess_name: str) -> np.ndarray:
+def preprocessing(images: np.ndarray, model_name: str) -> np.ndarray:
   images = grayscale_to_rgb_float32(images)
-  if preprocess_name == "baseline":
+  if model_name == "baseline":
     return images/255.0
-  elif preprocess_name == "vgg16":
+  elif model_name == "vgg16":
     return vgg16_preprocess(images)
-  raise ValueError(f"Unknown preprocess: {preprocess_name}")
+  raise ValueError(f"Unknown preprocess: {model_name}")
 
 def _infer_key(model_or_name):
   if isinstance(model_or_name, str):
@@ -37,9 +37,6 @@ def _infer_key(model_or_name):
   if isinstance(name, str) and len(name) > 0:
     return name
 
-  raise ValueError("Δώσε string ή model-builder function ή keras Model instance.")
-
-
 def dataset_preparation(model_or_name: str, x_train_val: np.ndarray, x_test: np.ndarray):
   key = _infer_key(model_or_name)
   
@@ -49,4 +46,5 @@ def dataset_preparation(model_or_name: str, x_train_val: np.ndarray, x_test: np.
   print("Using preprocessing:", pp)
   x_train_val_pp = preprocessing(x_train_val, pp)
   x_test_pp = preprocessing(x_test, pp)
+
   return x_train_val_pp, x_test_pp
